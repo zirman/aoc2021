@@ -9,7 +9,8 @@ fun main() {
     fun part2(input: List<String>): Int = input
         .map { it.toInt() }
         .windowed(3)
-        .map { it.sum() }.fold(Pair<Int?, Int>(null, 0)) { (previousNumber, count), depth ->
+        .map { it.sum() }
+        .fold(Pair<Int?, Int>(null, 0)) { (previousNumber, count), depth ->
             Pair(depth, count + if (previousNumber != null && previousNumber < depth) 1 else 0)
         }
         .second
