@@ -1,76 +1,49 @@
-sealed class Movement {
-    data class Forward(val x: Int) : Movement()
-    data class Down(val x: Int) : Movement()
-    data class Up(val x: Int) : Movement()
-}
-
 fun main() {
     fun part1(input: List<String>): Int {
-        val movements = input.map { string ->
-            Regex("""forward (\d+)""").matchEntire(string)
-                ?.let {
-                    Movement.Forward(it.groups[1]!!.value.toInt())
-                }
-                ?: Regex("""down (\d+)""").matchEntire(string)?.let {
-                    Movement.Down(it.groups[1]!!.value.toInt())
-                }
-                ?: Regex("""up (\d+)""").matchEntire(string)?.let {
-                    Movement.Up(it.groups[1]!!.value.toInt())
-                }
-                ?: throw Exception()
-        }
-
         var depth = 0
         var distance = 0
-        movements.forEach { movement ->
-            when (movement) {
-                is Movement.Forward -> {
-                    distance += movement.x
+
+        input.forEach { string ->
+            Regex("""forward (\d+)""").matchEntire(string)
+                ?.let {
+                    val x = it.groups[1]!!.value.toInt()
+                    distance += x
                 }
-                is Movement.Down -> {
-                    depth += movement.x
+                ?: Regex("""down (\d+)""").matchEntire(string)?.let {
+                    val x = it.groups[1]!!.value.toInt()
+                    depth += x
                 }
-                is Movement.Up -> {
-                    depth -= movement.x
+                ?: Regex("""up (\d+)""").matchEntire(string)?.let {
+                    val x = it.groups[1]!!.value.toInt()
+                    depth -= x
                 }
-            }
+                ?: throw Exception()
         }
 
         return depth * distance
     }
 
     fun part2(input: List<String>): Int {
-        val movements = input.map { string ->
-            Regex("""forward (\d+)""").matchEntire(string)
-                ?.let {
-                    Movement.Forward(it.groups[1]!!.value.toInt())
-                }
-                ?: Regex("""down (\d+)""").matchEntire(string)?.let {
-                    Movement.Down(it.groups[1]!!.value.toInt())
-                }
-                ?: Regex("""up (\d+)""").matchEntire(string)?.let {
-                    Movement.Up(it.groups[1]!!.value.toInt())
-                }
-                ?: throw Exception()
-        }
-
         var depth = 0
         var distance = 0
         var aim = 0
 
-        movements.forEach { movement ->
-            when (movement) {
-                is Movement.Forward -> {
-                    distance += movement.x
-                    depth += aim * movement.x
+        input.forEach { string ->
+            Regex("""forward (\d+)""").matchEntire(string)
+                ?.let {
+                    val x = it.groups[1]!!.value.toInt()
+                    distance += x
+                    depth += aim * x
                 }
-                is Movement.Down -> {
-                    aim += movement.x
+                ?: Regex("""down (\d+)""").matchEntire(string)?.let {
+                    val x = it.groups[1]!!.value.toInt()
+                    aim += x
                 }
-                is Movement.Up -> {
-                    aim -= movement.x
+                ?: Regex("""up (\d+)""").matchEntire(string)?.let {
+                    val x = it.groups[1]!!.value.toInt()
+                    aim -= x
                 }
-            }
+                ?: throw Exception()
         }
 
         return depth * distance
