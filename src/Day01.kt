@@ -8,6 +8,7 @@ fun main() {
 
     fun part2(input: List<String>): Int = input
         .map { it.toInt() }
+        .asSequence()
         .windowed(3)
         .map { it.sum() }
         .fold(Pair<Int?, Int>(null, 0)) { (previousNumber, count), depth ->
