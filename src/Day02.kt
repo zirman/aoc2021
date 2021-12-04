@@ -6,15 +6,15 @@ fun main() {
         input.forEach { string ->
             Regex("""forward (\d+)""").matchEntire(string)
                 ?.let {
-                    val x = it.groups[1]!!.value.toInt()
+                    val x = it.groupValues[1].toInt()
                     distance += x
                 }
                 ?: Regex("""down (\d+)""").matchEntire(string)?.let {
-                    val x = it.groups[1]!!.value.toInt()
+                    val x = it.groupValues[1].toInt()
                     depth += x
                 }
                 ?: Regex("""up (\d+)""").matchEntire(string)?.let {
-                    val x = it.groups[1]!!.value.toInt()
+                    val x = it.groupValues[1].toInt()
                     depth -= x
                 }
                 ?: throw Exception()
@@ -31,16 +31,16 @@ fun main() {
         input.forEach { string ->
             Regex("""forward (\d+)""").matchEntire(string)
                 ?.let {
-                    val x = it.groups[1]!!.value.toInt()
+                    val x = it.groupValues[1].toInt()
                     distance += x
                     depth += aim * x
                 }
                 ?: Regex("""down (\d+)""").matchEntire(string)?.let {
-                    val x = it.groups[1]!!.value.toInt()
+                    val x = it.groupValues[1].toInt()
                     aim += x
                 }
                 ?: Regex("""up (\d+)""").matchEntire(string)?.let {
-                    val x = it.groups[1]!!.value.toInt()
+                    val x = it.groupValues[1].toInt()
                     aim -= x
                 }
                 ?: throw Exception()
