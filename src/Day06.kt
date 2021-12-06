@@ -15,45 +15,32 @@ fun main() {
         return fish.size
     }
 
-    fun part2(input: List<String>, days: Int): ULong {
-        val fish = input[0].split(",").map { it.toULong() }
+    fun part2(input: List<String>, days: Int): Long {
+        val fish = input[0].split(",").map { it.toInt() }
+        val initialBuckets = (0..8).map { timer -> fish.count { it == timer }.toLong() }
 
-        var bar = listOf(
-            fish.count { it == 0UL }.toULong(),
-            fish.count { it == 1UL }.toULong(),
-            fish.count { it == 2UL }.toULong(),
-            fish.count { it == 3UL }.toULong(),
-            fish.count { it == 4UL }.toULong(),
-            fish.count { it == 5UL }.toULong(),
-            fish.count { it == 6UL }.toULong(),
-            fish.count { it == 7UL }.toULong(),
-            fish.count { it == 8UL }.toULong()
-        )
-
-        for (x in 0 until days) {
-            bar = listOf(
-                bar[1],
-                bar[2],
-                bar[3],
-                bar[4],
-                bar[5],
-                bar[6],
-                bar[7] + bar[0],
-                bar[8],
-                bar[0],
+        val finalBuckets = (1..days).fold(initialBuckets) { buckets, _ ->
+            listOf(
+                buckets[1],
+                buckets[2],
+                buckets[3],
+                buckets[4],
+                buckets[5],
+                buckets[6],
+                buckets[7] + buckets[0],
+                buckets[8],
+                buckets[0],
             )
         }
 
-        //println(Long.MAX_VALUE)
-        //println(bar.fold(0L) { a, b -> a + b })
-        return bar.fold(0UL) { a, b -> a + b }
+        return finalBuckets.fold(0L) { a, b -> a + b }
     }
 
     // test if implementation meets criteria from the description, like:
     val testInput = readInput("Day06_test")
-    check(part2(testInput, 18) == 26UL)
-    check(part2(testInput, 80) == 5934UL)
-    check(part2(testInput, 256) == 26_984_457_539UL)
+    check(part2(testInput, 18) == 26L)
+    check(part2(testInput, 80) == 5934L)
+    check(part2(testInput, 256) == 26_984_457_539L)
 
     val input = readInput("Day06")
     println(part2(input, 80))
