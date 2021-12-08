@@ -1,6 +1,4 @@
 import kotlin.math.absoluteValue
-import kotlin.math.roundToInt
-import kotlin.system.measureTimeMillis
 
 fun main() {
     fun part1(input: List<String>): Int {
@@ -12,13 +10,9 @@ fun main() {
     }
 
     fun part2(input: List<String>): Int {
-        fun <T, R> ((T) -> R).memoize(): (T) -> R {
-            val table = mutableMapOf<T, R>()
-            return { x -> table.getOrPut(x) { invoke(x) } }
-        }
-
         val pos = input[0].split(',').map { it.toInt() }
 
+        // equivalent to (1..distance).sum()
         fun cost(distance: Int): Int =
             ((distance * distance) + distance) / 2
 
@@ -34,5 +28,5 @@ fun main() {
 
     val input = readInput("Day07")
     println(part1(input))
-    println("time: ${measureTimeMillis { println(part2(input)) }}")
+    println(part2(input))
 }
