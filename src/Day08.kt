@@ -10,34 +10,39 @@ fun main() {
     }
 
     fun part2(input: List<String>): Int {
-        return input.map { line ->
-            val segments = line.split(" | ")[0].split(" ").map { it.map { it }.toSet() }
+        return input.sumOf { line ->
+            val columns = line.split(" | ")
+            val digitSegments = columns[0].split(" ").map { string -> string.map { it }.toSet() }
 
-            val one = segments.find { it.size == 2 }!!
-            val four = segments.find { it.size == 4 }!!
-            val seven = segments.find { it.size == 3 }!!
-            val eight = segments.find { it.size == 7 }!!
+            val one = digitSegments.find { it.size == 2 }!!
+            val four = digitSegments.find { it.size == 4 }!!
+            val seven = digitSegments.find { it.size == 3 }!!
+            val eight = digitSegments.find { it.size == 7 }!!
 
-            val three = segments.filter { it.size == 5 }
+            val fiveSegments = digitSegments.filter { it.size == 5 }
+
+            val three = fiveSegments
                 .find { it.containsAll(one) }!!
 
-            val five = segments.filter { it.size == 5 }
+            val five = fiveSegments
                 .find { it != three && it.intersect(four).size == 3 }!!
 
-            val two = segments.filter { it.size == 5 }
+            val two = fiveSegments
                 .find { it != three && it != five }!!
 
-            val nine = segments.filter { it.size == 6 }
+            val sixSegments = digitSegments.filter { it.size == 6 }
+
+            val nine = sixSegments
                 .find { it.containsAll(four) }!!
 
-            val zero = segments.filter { it.size == 6 }
+            val zero = sixSegments
                 .find { it != nine && it.containsAll(one) }!!
 
-            val six = segments.filter { it.size == 6 }
+            val six = sixSegments
                 .find { it != nine && it != zero }!!
 
-            line.split(" | ")[1].split(" ").map {
-                when (it.map { it }.toSet()) {
+            columns[1].split(" ").map { string ->
+                when (string.map { it }.toSet()) {
                     zero -> 0
                     one -> 1
                     two -> 2
@@ -52,10 +57,8 @@ fun main() {
                         throw Exception()
                     }
                 }
-            }.fold(0) { a, b ->
-                a * 10 + b
-            }
-        }.sum()
+            }.joinToString("").toInt()
+        }
     }
 
     // test if implementation meets criteria from the description, like:
