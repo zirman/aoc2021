@@ -1,7 +1,8 @@
 fun main() {
     fun part1(input: List<String>): Int {
         val levels = input.map { line ->
-            line.map { it.toString().toInt() }.toMutableList()
+            line.map { it.toString().toInt() }
+                .toMutableList()
         }
 
         var flashes = 0
@@ -10,8 +11,12 @@ fun main() {
             val flashed = mutableSetOf<Pair<Int, Int>>()
 
             fun inc(x: Int, y: Int) {
-                if (x >= 0 && y >= 0 && x < levels[0].size && y < levels.size && flashed.contains(Pair(x, y)).not()) {
+                if (y >= 0 && y < levels.size &&
+                    x >= 0 && x < levels[0].size &&
+                    flashed.contains(Pair(x, y)).not()
+                ) {
                     levels[y][x]++
+
                     if (levels[y][x] > 9) {
                         flashed.add(Pair(x, y))
                         levels[y][x] = 0
@@ -28,7 +33,10 @@ fun main() {
                 }
             }
 
-            levels.indices.forEach { y -> levels[y].indices.forEach { x -> inc(x, y) } }
+            levels.indices.forEach { y ->
+                levels[y].indices.forEach { x -> inc(x, y) }
+            }
+
             flashes += flashed.size
         }
 
@@ -37,7 +45,8 @@ fun main() {
 
     fun part2(input: List<String>): Int {
         val levels = input.map { line ->
-            line.map { it.toString().toInt() }.toMutableList()
+            line.map { it.toString().toInt() }
+                .toMutableList()
         }
 
         val synced = levels.map { it.map { 0 } }
@@ -46,8 +55,12 @@ fun main() {
             val flashed = mutableSetOf<Pair<Int, Int>>()
 
             fun inc(x: Int, y: Int) {
-                if (x >= 0 && y >= 0 && x < levels[0].size && y < levels.size && flashed.contains(Pair(x, y)).not()) {
+                if (y >= 0 && y < levels.size &&
+                    x >= 0 && x < levels[0].size &&
+                    flashed.contains(Pair(x, y)).not()
+                ) {
                     levels[y][x]++
+
                     if (levels[y][x] > 9) {
                         flashed.add(Pair(x, y))
                         levels[y][x] = 0
