@@ -55,10 +55,10 @@ fun main() {
 
         val cs = sections[0].map { it }
 
-        val counts = cs.windowed(2).fold(mapOf<Char, Long>(cs.last() to 1)) { m1, it ->
-            recur(it[0], it[1], 0)
-                .merge(m1) { a, b -> (a ?: 0) + (b ?: 0) }
-                .merge(it[0]) { (it ?: 0) + 1 }
+        val counts = cs.windowed(2).fold(mapOf<Char, Long>(cs.last() to 1)) { countsAcc, cPair ->
+            countsAcc
+                .merge(recur(cPair[0], cPair[1], 0)) { a, b -> (a ?: 0) + (b ?: 0) }
+                .merge(cPair[0]) { (it ?: 0) + 1 }
         }
 
         val min = counts.minByOrNull { (_, b) -> b }!!.value
