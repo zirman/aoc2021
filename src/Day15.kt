@@ -3,10 +3,6 @@ import kotlin.math.absoluteValue
 
 fun main() {
     fun search(risks: List<List<Int>>): Int {
-        //        println(risks.joinToString("\n") {
-//            it.joinToString("") { "%1d".format(it) }
-//        })
-
         val targetX = risks[0].size - 1
         val targetY = risks.size - 1
 
@@ -14,21 +10,21 @@ fun main() {
             return ((x - targetX).absoluteValue + (y - targetY).absoluteValue)
         }
 
-        val maxRisk = mutableMapOf<Pair<Int, Int>, Int>()
+        val maxRisk: List<MutableList<Int?>> =
+            risks.map { row -> row.indices.map { null }.toMutableList() }
 
         val queue =
-            PriorityQueue<Triple<Int, Int, Int>>(compareBy { (x, y, g) -> h(x, y) + g })
+            PriorityQueue<Triple<Int, Int, Int>>(compareBy { (x, y, g) -> /*h(x, y) + */g })
 
         queue.add(Triple(0, 1, risks[1][0]))
         queue.add(Triple(1, 0, risks[0][1]))
-        maxRisk[Pair(0, 1)] = risks[1][0]
-        maxRisk[Pair(1, 0)] = risks[0][1]
+        maxRisk[1][0] = risks[1][0]
+        maxRisk[0][1] = risks[0][1]
 
         fun addQueue(x: Int, y: Int, g: Int) {
             if (y >= 0 && y < risks.size && x >= 0 && x < risks[0].size) {
-                queue.find { (xx, yy) -> xx == x && yy == y }
-                if (g + risks[y][x] < (maxRisk[Pair(x, y)] ?: Int.MAX_VALUE)) {
-                    maxRisk[Pair(x, y)] = g + risks[y][x]
+                if (g + risks[y][x] < (maxRisk[y][x] ?: Int.MAX_VALUE)) {
+                    maxRisk[y][x] = g + risks[y][x]
                     queue.add(Triple(x, y, g + risks[y][x]))
                 }
             }
@@ -59,7 +55,7 @@ fun main() {
                 row.map { risk ->
                     val newRisk = risk + inc
                     if (newRisk > 9) {
-                        (newRisk % 10) + 1
+                        newRisk - 9
                     } else {
                         newRisk
                     }
@@ -71,7 +67,7 @@ fun main() {
                     row.map { risk ->
                         val newRisk = risk + inc
                         if (newRisk > 9) {
-                            (newRisk % 10) + 1
+                            newRisk - 9
                         } else {
                             newRisk
                         }
