@@ -1,5 +1,5 @@
 import java.util.PriorityQueue
-import kotlin.math.absoluteValue
+import kotlin.system.measureTimeMillis
 
 data class AStar(val x: Int, val y: Int, val g: Int, val h: Int, val gh: Int = g + h)
 
@@ -8,10 +8,11 @@ fun main() {
         val targetX = risks[0].size - 1
         val targetY = risks.size - 1
 
+        // assumes x/y is smaller than target x/y
         fun h(x: Int, y: Int): Int =
-            ((x - targetX).absoluteValue + (y - targetY).absoluteValue)
+            (targetX - x) + (targetY - y)
 
-        val maxRisk: List<MutableList<Int?>> =
+        val minRisks: List<MutableList<Int?>> =
             risks.map { row -> row.indices.map { null }.toMutableList() }
 
         val queue =
@@ -19,21 +20,22 @@ fun main() {
 
         queue.add(AStar(0, 1, risks[1][0], h(0, 1)))
         queue.add(AStar(1, 0, risks[0][1], h(1, 0)))
-        maxRisk[1][0] = risks[1][0]
-        maxRisk[0][1] = risks[0][1]
+        minRisks[1][0] = risks[1][0]
+        minRisks[0][1] = risks[0][1]
 
         fun addQueue(x: Int, y: Int, g: Int) {
-            if (y >= 0 && y < risks.size && x >= 0 && x < risks[0].size) {
-                if (g + risks[y][x] < (maxRisk[y][x] ?: Int.MAX_VALUE)) {
-                    maxRisk[y][x] = g + risks[y][x]
-                    queue.add(AStar(x, y, g + risks[y][x], h(x, y)))
-                }
+            if (y >= 0 && y < risks.size &&
+                x >= 0 && x < risks[0].size &&
+                minRisks[y][x]?.let { g + risks[y][x] < it } != false
+            ) {
+                minRisks[y][x] = g + risks[y][x]
+                queue.add(AStar(x, y, g + risks[y][x], h(x, y)))
             }
         }
 
         while (true) {
             val next = queue.remove()
-            val (x, y, g, _) = next
+            val (x, y, g) = next
             if (next.x == targetX && next.y == targetY) {
                 return g
             }
