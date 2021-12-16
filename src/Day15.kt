@@ -1,48 +1,97 @@
 import java.util.PriorityQueue
-import kotlin.system.measureTimeMillis
 
-data class AStar(val x: Int, val y: Int, val g: Int, val h: Int, val gh: Int = g + h)
+data class AStarNode(val x: Int, val y: Int, val g: Int, val h: Int, val f: Int = g + h)
 
 fun main() {
-    fun search(risks: List<List<Int>>): Int {
-        val targetX = risks[0].size - 1
-        val targetY = risks.size - 1
+    fun search(cost: List<List<Int>>): Int {
+        val targetX = cost[0].size - 1
+        val targetY = cost.size - 1
 
         // assumes x/y is smaller than target x/y
+        // dijkstra performs slightly better
         fun h(x: Int, y: Int): Int =
-            (targetX - x) + (targetY - y)
+            0//(targetX - x) + (targetY - y)
 
-        val minRisks: List<MutableList<Int?>> =
-            risks.map { row -> row.indices.map { null }.toMutableList() }
+        val minG: List<MutableList<Int?>> =
+            cost.map { row -> row.indices.map { null }.toMutableList() }
 
-        val queue =
-            PriorityQueue<AStar>(compareBy { it.gh })
+        val fringe =
+            PriorityQueue<AStarNode>(compareBy { it.f })
 
-        queue.add(AStar(0, 1, risks[1][0], h(0, 1)))
-        queue.add(AStar(1, 0, risks[0][1], h(1, 0)))
-        minRisks[1][0] = risks[1][0]
-        minRisks[0][1] = risks[0][1]
+        fringe.add(AStarNode(0, 1, cost[1][0], h(0, 1)))
+        fringe.add(AStarNode(1, 0, cost[0][1], h(1, 0)))
+        minG[0][0] = 0
+        minG[1][0] = cost[1][0]
+        minG[0][1] = cost[0][1]
 
-        fun addQueue(x: Int, y: Int, g: Int) {
-            if (y >= 0 && y < risks.size &&
-                x >= 0 && x < risks[0].size &&
-                minRisks[y][x]?.let { g + risks[y][x] < it } != false
+        fun addFringe(x: Int, y: Int, fromG: Int) {
+            if (y >= 0 && y < cost.size &&
+                x >= 0 && x < cost[0].size
             ) {
-                minRisks[y][x] = g + risks[y][x]
-                queue.add(AStar(x, y, g + risks[y][x], h(x, y)))
+                val g = fromG + cost[y][x]
+
+                if (minG[y][x]?.let { g < it } != false) {
+                    minG[y][x] = g
+                    fringe.add(AStarNode(x, y, g, h(x, y)))
+                }
             }
         }
 
         while (true) {
-            val next = queue.remove()
+            val next = fringe.remove()
             val (x, y, g) = next
             if (next.x == targetX && next.y == targetY) {
+//                tailrec fun trace(x: Int, y: Int) {
+//                    totalG[y][x] = 9999
+//
+//                    if (x == 0 && y == 0) {
+//                        return
+//                    }
+//
+//                    fun foo(x: Int, y: Int): Int {
+//                        return if (y >= 0 && y < totalG.size && x >= 0 && x < totalG[0].size) {
+//                            totalG[y][x] ?: Int.MAX_VALUE
+//                        } else {
+//                            Int.MAX_VALUE
+//                        }
+//                    }
+//
+//                    val m = min(
+//                        min(
+//                            foo(x, y - 1),
+//                            foo(x - 1, y)
+//                        ),
+//                        min(
+//                            foo(x, y + 1),
+//                            foo(x + 1, y)
+//                        )
+//                    )
+//
+//                    if (y - 1 >= 0 && totalG[y - 1][x] == m) {
+//                        trace(x, y - 1)
+//                    } else if (x - 1 >= 0 && totalG[y][x - 1] == m) {
+//                        trace(x - 1, y)
+//                    } else if (y + 1 < totalG.size && totalG[y + 1][x] == m) {
+//                        trace(x, y + 1)
+//                    } else if (x + 1 < totalG[0].size && totalG[y][x + 1] == m) {
+//                        trace(x + 1, y)
+//                    }
+//                }
+//
+//                trace(totalG[0].size - 1, totalG.size - 1)
+//
+//                println(totalG.joinToString("\n") { row ->
+//                    row.joinToString("") {
+//                        if (it == 9999) "#" else " "
+//                    }
+//                })
+
                 return g
             }
-            addQueue(x, y + 1, g)
-            addQueue(x + 1, y, g)
-            addQueue(x - 1, y, g)
-            addQueue(x, y - 1, g)
+            addFringe(x, y + 1, g)
+            addFringe(x + 1, y, g)
+            addFringe(x - 1, y, g)
+            addFringe(x, y - 1, g)
         }
     }
 
