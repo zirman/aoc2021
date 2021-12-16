@@ -1,6 +1,6 @@
 import java.util.PriorityQueue
 
-data class AStarNode(val x: Int, val y: Int, val g: Int, val h: Int, val f: Int = g + h)
+data class AStarData(val x: Int, val y: Int, val g: Int, val h: Int, val f: Int = g + h)
 
 fun main() {
     fun search(cost: List<List<Int>>): Int {
@@ -16,13 +16,7 @@ fun main() {
             cost.map { row -> row.indices.map { null }.toMutableList() }
 
         val fringe =
-            PriorityQueue<AStarNode>(compareBy { it.f })
-
-        fringe.add(AStarNode(0, 1, cost[1][0], h(0, 1)))
-        fringe.add(AStarNode(1, 0, cost[0][1], h(1, 0)))
-        minG[0][0] = 0
-        minG[1][0] = cost[1][0]
-        minG[0][1] = cost[0][1]
+            PriorityQueue<AStarData>(compareBy { it.f })
 
         fun addFringe(x: Int, y: Int, fromG: Int) {
             if (y >= 0 && y < cost.size &&
@@ -32,10 +26,13 @@ fun main() {
 
                 if (minG[y][x]?.let { g < it } != false) {
                     minG[y][x] = g
-                    fringe.add(AStarNode(x, y, g, h(x, y)))
+                    fringe.add(AStarData(x, y, g, h(x, y)))
                 }
             }
         }
+
+        // negative so that the cost of going to first node is zero
+        addFringe(0, 0, -cost[0][0])
 
         while (true) {
             val next = fringe.remove()
