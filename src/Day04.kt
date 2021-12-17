@@ -2,7 +2,7 @@ fun main() {
     fun part1(input: List<String>): Int {
         val cards = input.subList(2, input.size).joinToString("\n").split("\n\n").map { string ->
             string.split("\n").map {
-                it.trim().split(Regex("""\s+""")).map { it.toInt() }.toMutableList<Int?>()
+                it.trim().split(Regex("""\s+""")).map { string -> string.toInt() }.toMutableList<Int?>()
             }
         }
 
@@ -39,7 +39,7 @@ fun main() {
 
         val cards = input.subList(2, input.size).joinToString("\n").split("\n\n").map { string ->
             string.split("\n").map {
-                it.trim().split(Regex("""\s+""")).map { it.toInt() }.toMutableList<Int?>()
+                it.trim().split(Regex("""\s+""")).map { string -> string.toInt() }.toMutableList<Int?>()
             }
         }
 
@@ -58,7 +58,7 @@ fun main() {
                 }
             }
 
-            cards.forEachIndexed() { i, card ->
+            cards.forEachIndexed { i, card ->
                 if (winningCards.contains(i).not()) {
                     card.forEach { row ->
                         if (row.all { it == null }) {
