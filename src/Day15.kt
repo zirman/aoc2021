@@ -1,38 +1,43 @@
 import java.util.PriorityQueue
+import kotlin.system.measureTimeMillis
 
 data class AStarData(val x: Int, val y: Int, val g: Int, val h: Int, val f: Int = g + h)
 
 fun main() {
-    fun search(cost: List<List<Int>>): Int {
-        val targetX = cost[0].size - 1
-        val targetY = cost.size - 1
+    fun search(cost: IntArray, width: Int): Int {
+        val targetX = width - 1
+        val targetY = (cost.size / width) - 1
 
         // assumes x/y is smaller than target x/y
         // dijkstra performs slightly better
         fun h(x: Int, y: Int): Int =
             0//(targetX - x) + (targetY - y)
 
-        val minG: List<MutableList<Int?>> =
-            cost.map { row -> row.indices.map { null }.toMutableList() }
+        val minG =
+            IntArray(cost.size)
+
+        minG.indices.forEach { i ->
+            minG[i] = Int.MAX_VALUE
+        }
 
         val fringe =
             PriorityQueue<AStarData>(compareBy { it.f })
 
         fun addFringe(x: Int, y: Int, fromG: Int) {
-            if (y >= 0 && y < cost.size &&
-                x >= 0 && x < cost[0].size
+            if (y >= 0 && y <= targetY &&
+                x >= 0 && x < width
             ) {
-                val g = fromG + cost[y][x]
+                val g = fromG + cost[(y * width) + x]
 
-                if (minG[y][x]?.let { g < it } != false) {
-                    minG[y][x] = g
+                if (g < minG[(y * width) + x]) {
+                    minG[(y * width) + x] = g
                     fringe.add(AStarData(x, y, g, h(x, y)))
                 }
             }
         }
 
         // negative so that the cost of going to first node is zero
-        addFringe(0, 0, -cost[0][0])
+        addFringe(0, 0, -cost[0])
 
         while (true) {
             val next = fringe.remove()
@@ -93,8 +98,9 @@ fun main() {
     }
 
     fun part1(input: List<String>): Int {
-        val risks = input.map { line -> line.map { it.digitToInt() } }
-        return search(risks)
+        val risks = input.flatMap { line -> line.map { it.digitToInt() } }.toIntArray()
+        val width = input[0].count()
+        return search(risks, width)
     }
 
     fun part2(input: List<String>): Int {
@@ -112,7 +118,7 @@ fun main() {
             }
         }.let { cols ->
             (0 until 5).flatMap { inc ->
-                cols.map { row ->
+                cols.flatMap { row ->
                     row.map { risk ->
                         val newRisk = risk + inc
                         if (newRisk > 9) {
@@ -122,10 +128,15 @@ fun main() {
                         }
                     }
                 }
-            }
+            }.toIntArray()
         }
 
-        return search(risks)
+        val width = input[0].count() * 5
+
+        var x: Int
+        println("time: ${measureTimeMillis { x = search(risks, width) }}")
+
+        return x
     }
 
     // test if implementation meets criteria from the description, like:
