@@ -3,25 +3,23 @@ fun main() {
         val sections = input.joinToString("\n").split("\n\n")
         val enhance = sections[0].toCharArray()
         val image = sections[1].split("\n").map { line -> line.toList() }
-
-        val borderWidth = 1
         var infinityPixels = '.'
 
         return (1..iterations)
-            .fold(image) { acc, _ ->
+            .fold(image) { imageAcc, _ ->
                 fun at(x: Int, y: Int): Char {
-                    return if (y >= 0 && y < acc.size &&
-                        x >= 0 && x < acc[0].size
+                    return if (y >= 0 && y < imageAcc.size &&
+                        x >= 0 && x < imageAcc[0].size
                     ) {
-                        acc[y][x]
+                        imageAcc[y][x]
                     } else {
                         infinityPixels
                     }
                 }
 
-                ((-2 - borderWidth) until acc.size + borderWidth)
+                val nextImage = (-2 until imageAcc.size)
                     .map { y ->
-                        ((-2 - borderWidth) until acc[0].size + borderWidth).map { x ->
+                        (-2 until imageAcc[0].size).map { x ->
                             var kernel = 0
                             (y until y + 3).forEach { i ->
                                 (x until x + 3).forEach { k ->
@@ -38,7 +36,16 @@ fun main() {
                             enhance[kernel]
                         }
                     }
-                    .also { row -> infinityPixels = row[borderWidth - 1][borderWidth - 1] }
+
+                infinityPixels = enhance[
+                        when (infinityPixels) {
+                            '#' -> 0b111111111
+                            '.' -> 0b000000000
+                            else -> throw Exception()
+                        }
+                ]
+
+                nextImage
             }
             .sumOf { row -> row.count { it == '#' } }
     }
