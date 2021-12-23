@@ -11,23 +11,6 @@ fun Range.containsElement(i: Long): Boolean =
 fun Range.length(): Long =
     (max - min) + 1
 
-fun Range.intersection(range: Range): Range? =
-    if (containsElement(range.min)) {
-        if (containsElement(range.max)) {
-            range
-        } else {
-            Range(range.min, max)
-        }
-    } else if (range.containsElement(min)) {
-        if (range.containsElement(max)) {
-            this
-        } else {
-            Range(min, range.max)
-        }
-    } else {
-        null
-    }
-
 fun Range.overlapping(range: Range): Triple<List<Range>, Range?, List<Range>> =
     if (containsElement(range.min)) {
         if (containsElement(range.max)) {
@@ -201,7 +184,6 @@ fun main() {
                 ),
             )
         }
-
 
         cs.forEach { (onOff, c) ->
             //println("${cuboids.size} $onOff $c")
